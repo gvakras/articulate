@@ -59,7 +59,7 @@ const init = async () => {
 
   try {
     await server.start();
-    await server.route(Routes);
+    //await server.route(Routes);
   }
   catch (error) {
     return logger.error(error);

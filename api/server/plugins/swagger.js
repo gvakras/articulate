@@ -23,7 +23,8 @@ module.exports = {
                 options: {
                     title: options.info.title,
                     path: '/documentation',
-                    swaggerEndpoint: '/swagger.json',
+                    basePath: '/api',
+                    swaggerEndpoint: '/api/swagger.json',
                     swaggerOptions: {
                         validatorUrl: null
                     }
