@@ -1,8 +1,11 @@
+import HapiAuthBell from 'bell';
 import Blipp from 'blipp';
 import h2o2 from 'h2o2';
 import Hapi from 'hapi';
+import HapiAuthCookie from 'hapi-auth-cookie';
 import Webpack from 'webpack';
 import argv from './argv';
+import AuthStrategies from './auth/strategies';
 import logger from './logger';
 import * as WebpackPlugin from './middlewares/hapi-webpack-plugin';
 import * as WSProxyPlugin from './middlewares/ws-proxy-plugin';
@@ -23,7 +26,7 @@ const prettyHost = customHost || 'localhost';
 
 const server = Hapi.server({
   port,
-  host,
+  host
 });
 
 const compiler = Webpack(Config);
@@ -40,24 +43,36 @@ const hot = {
 const init = async () => {
 
   try {
+
     await server.register([
       {
-        plugin: WebpackPlugin,
-        options: { compiler, assets, hot },
+        plugin: HapiAuthBell,
+        options: {}
+      },
+      {
+        plugin: HapiAuthCookie,
+        options: {}
       }, {
-        plugin: WSProxyPlugin,
+        plugin: WebpackPlugin,
+        options: { compiler, assets, hot }
+      }, {
+        plugin: WSProxyPlugin
       }, {
         plugin: h2o2,
+        options: {
+          passThrough: true,
+          localStatePassThrough: true,
+          xforward: true
+        }
       }, {
         plugin: Blipp,
-      },
+        options: {
+          showAuth: true,
+          showStart: false
+        }
+      }
     ]);
-  }
-  catch (error) {
-    return logger.error(error);
-  }
-
-  try {
+    await AuthStrategies(server);
     await server.start();
     await server.route(Routes);
   }
@@ -78,8 +93,10 @@ const init = async () => {
   else {
     logger.appStarted(port, prettyHost);
   }
-  // eslint-disable-next-line no-console
-  console.log(server.plugins.blipp.text());
+  if (process.env.DEBUG_ROUTES) {
+    // eslint-disable-next-line no-console
+    console.log(server.plugins.blipp.text());
+  }
   return server;
 };
 

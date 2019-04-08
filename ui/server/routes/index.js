@@ -1,5 +1,7 @@
+import Auth from './auth.route';
 import Proxy from './proxy.route';
 
 export default [
-  ...Proxy,
+  ...Auth,
+  ...Proxy
 ];

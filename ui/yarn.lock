@@ -3089,6 +3089,18 @@ beeper@^1.0.0:
   resolved "https://registry.yarnpkg.com/beeper/-/beeper-1.1.1.tgz#e6d5ea8c5dad001304a70b22638447f69cb2f809"
   integrity sha1-5tXqjF2tABMEpwsiY4RH9pyy+Ak=
 
+bell@^10.0.0:
+  version "10.0.0"
+  resolved "https://registry.yarnpkg.com/bell/-/bell-10.0.0.tgz#1178747b0d3fd0077e73becfe666368e9afe57d0"
+  integrity sha512-Ed3Uty1RaEuh7vEllhGkXL5g74lpsIbt8J6kOdpO0gC92YkzwjqtUCBbfu6DJLUOiHD4LRgpfzX4K29seXmdVw==
+  dependencies:
+    boom "7.x.x"
+    bounce "1.x.x"
+    cryptiles "4.x.x"
+    hoek "6.x.x"
+    joi "14.x.x"
+    wreck "14.x.x"
+
 better-assert@~1.0.0:
   version "1.0.2"
   resolved "https://registry.yarnpkg.com/better-assert/-/better-assert-1.0.2.tgz#40866b9e1b9e0b55b481894311e68faffaebc522"
@@ -3265,7 +3277,7 @@ boolbase@^1.0.0, boolbase@~1.0.0:
   resolved "https://registry.yarnpkg.com/boolbase/-/boolbase-1.0.0.tgz#68dff5fbe60c51eb37725ea9e3ed310dcc1e776e"
   integrity sha1-aN/1++YMUes3cl6p4+0xDcwed24=
 
-boom@7.x.x:
+boom@7.x.x, boom@^7.3.0:
   version "7.3.0"
   resolved "https://registry.yarnpkg.com/boom/-/boom-7.3.0.tgz#733a6d956d33b0b1999da3fe6c12996950d017b9"
   integrity sha512-Swpoyi2t5+GhOEGw8rEsKvTxFLIDiiKoUc2gsoV6Lyr43LHBIzch3k2MvYUs8RTROrIkVJ3Al0TkaOGjnb+B6A==
@@ -7214,6 +7226,16 @@ handlebars@^4.0.11, handlebars@^4.0.3, handlebars@^4.0.5:
     source-map "^0.6.1"
   optionalDependencies:
     uglify-js "^3.1.4"
+
+hapi-auth-cookie@^10.0.0:
+  version "10.0.0"
+  resolved "https://registry.yarnpkg.com/hapi-auth-cookie/-/hapi-auth-cookie-10.0.0.tgz#a332c5b5ba4095b63245943dc184a1520fc6308a"
+  integrity sha512-8oCiKTvhp0AaBJLaMGUBLiKvVulxmdbvYm5P32TkS2ePWL+axRJj975qrKaAuZyr5i0e9QInaa2ARMnRDM1zPw==
+  dependencies:
+    boom "7.x.x"
+    bounce "1.x.x"
+    hoek "6.x.x"
+    joi "14.x.x"
 
 hapi@18.1.0:
   version "18.1.0"
