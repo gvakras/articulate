@@ -5,25 +5,31 @@
  *
  */
 
-import React from 'react';
-
+import {
+  CircularProgress,
+  Grid
+} from '@material-ui/core';
 import PropTypes from 'prop-types';
+import React from 'react';
 import { connect } from 'react-redux';
+import { Link } from 'react-router-dom';
+import { push } from 'react-router-redux';
 import { compose } from 'redux';
 import { createStructuredSelector } from 'reselect';
-
-import { Grid, CircularProgress } from '@material-ui/core';
-
-import MainContentHeader from './Components/MainContentHeader';
+import injectSaga from '../../utils/injectSaga';
+import {
+  exportAgent,
+  importAgent,
+  loadAgents
+} from '../App/actions';
+import {
+  makeSelectAgentExport,
+  makeSelectAgents
+} from '../App/selectors';
 import AgentsCards from './Components/AgentsCards';
-
-import injectSaga from 'utils/injectSaga';
-
-import saga from './saga';
+import MainContentHeader from './Components/MainContentHeader';
 import messages from './messages';
-import { makeSelectAgents, makeSelectAgentExport } from '../App/selectors';
-import { loadAgents, exportAgent, importAgent } from '../App/actions';
-import { push } from 'react-router-redux';
+import saga from './saga';
 
 /* eslint-disable react/prefer-stateless-function */
 export class AgentsPage extends React.PureComponent {
@@ -35,12 +41,14 @@ export class AgentsPage extends React.PureComponent {
   render() {
     const { agents } = this.props;
     return (
-      agents ? 
+      agents ?
         <Grid container>
           <MainContentHeader
             title={messages.title}
             sizesForHideInlineElement={['sm', 'xs']}
           />
+          <Link to="/auth/twitter" target="_self">twitter</Link>
+
           <AgentsCards
             agents={agents}
             onImportAgent={this.props.onImportAgent}
@@ -50,7 +58,7 @@ export class AgentsPage extends React.PureComponent {
           />
         </Grid>
         :
-        <CircularProgress style={{position: 'absolute', top: '40%', left: '49%'}}/>
+        <CircularProgress style={{ position: 'absolute', top: '40%', left: '49%' }} />
     );
   }
 }
@@ -60,24 +68,24 @@ AgentsPage.propTypes = {
   loading: PropTypes.bool,
   error: PropTypes.oneOfType([
     PropTypes.object,
-    PropTypes.bool,
+    PropTypes.bool
   ]),
   agents: PropTypes.oneOfType([
     PropTypes.array,
-    PropTypes.bool,
+    PropTypes.bool
   ]),
   agentExport: PropTypes.object
 };
 
 const mapStateToProps = createStructuredSelector({
   agents: makeSelectAgents(),
-  agentExport: makeSelectAgentExport(),
+  agentExport: makeSelectAgentExport()
 });
 
 function mapDispatchToProps(dispatch) {
   return {
     onComponentMounted: () => {
-      dispatch(loadAgents())
+      dispatch(loadAgents());
     },
     onGoToUrl: (url) => {
       dispatch(push(url));
@@ -96,5 +104,5 @@ const withConnect = connect(mapStateToProps, mapDispatchToProps);
 
 export default compose(
   withSaga,
-  withConnect,
+  withConnect
 )(AgentsPage);

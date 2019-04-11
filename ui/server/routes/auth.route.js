@@ -1,5 +1,5 @@
 import Boom from 'boom';
-
+import logger from'../logger'
 module.exports = [
   {
     method: 'GET',
@@ -15,7 +15,7 @@ module.exports = [
         // Just store a part of the twitter profile information in the session as an example. You could do something
         // more useful here - like loading or setting up an account (social signup).
         const { profile } = request.auth.credentials;
-
+        logger.log(request.auth)
         await request.cookieAuth.set({
           twitterId: profile.id,
           username: profile.username,
