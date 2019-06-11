@@ -68,6 +68,7 @@ class ContextValidate {
                     savedSlots: ContextModel.savedSlots,
                     actionQueue: ContextModel.actionQueue,
                     responseQueue: ContextModel.responseQueue,
+                    docIds: ContextModel.docIds,
                     creationDate: ContextModel.creationDate,
                     modificationDate: ContextModel.modificationDate
                 };
@@ -122,6 +123,15 @@ class ContextValidate {
             })()
         };
 
+        this.findDocsBySession = {
+            params: (() => {
+
+                return {
+                    [PARAM_SESSION]: ContextModel.sessionId.required()
+                };
+            })()
+        };
+
         this.findFrameBySessionAndFrame = {
             params: (() => {
 
@@ -153,5 +163,5 @@ class ContextValidate {
     }
 }
 
-const actionValidate = new ContextValidate();
-module.exports = actionValidate;
+const contextValidate = new ContextValidate();
+module.exports = contextValidate;

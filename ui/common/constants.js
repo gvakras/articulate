@@ -4,7 +4,6 @@ export const ONCE_TILL_UNMOUNT = '@@saga-injector/once-till-unmount';
 export const ACTION_INTENT_SPLIT_SYMBOL = '+__+';
 export const PROXY_ROUTE_PREFIX = '/api';
 
-
 // ROUTES
 export const ROUTE_ACTION = 'action';
 export const ROUTE_AGENT = 'agent';
@@ -26,3 +25,4 @@ export const ROUTE_FRAME = 'frame';
 export const ROUTE_EXPORT = 'export';
 export const ROUTE_IMPORT = 'import';
 export const ROUTE_BULK = 'bulk';
+export const ROUTE_USER = 'user';

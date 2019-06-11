@@ -47,8 +47,13 @@ const styles = {
     bottom: '2px',
     paddingLeft: '2px',
   },
-  agentTabs: {
-    paddingLeft: '5px',
+  selected: {
+    color: '#4e4e4e',
+    border: '1px solid #C5CBD8',
+    borderTopLeftRadius: '5px',
+    borderTopRightRadius: '5px',
+    backgroundColor: '#fff',
+    borderBottom: '0px',
   },
   modalContent: {
     top: '50%',
@@ -78,10 +83,12 @@ const styles = {
     fontWeight: 300,
   },
   categoryTabs: {
-    paddingLeft: "5px",
+    paddingLeft: '15px',
   },
   tabLabel: {
     padding: '0px 10px',
+    position: 'relative',
+    top: '5px',
   },
   notificationDot: {
     backgroundColor: '#Cb2121',
@@ -90,20 +97,19 @@ const styles = {
     borderRadius: '50%',
     position: 'absolute',
     top: '10px',
-    left: '5px'
+    left: '5px',
   },
   numOfErrorsLabel: {
     fontSize: '10px',
     color: 'white',
     position: 'relative',
     bottom: '4.5px',
-    left: '0.5px'
+    left: '0.5px',
   },
 };
 
 /* eslint-disable react/prefer-stateless-function */
 class Form extends React.Component {
-
   state = {
     selectedTab: 0,
     openModal: false,
@@ -130,16 +136,15 @@ class Form extends React.Component {
   render() {
     const { classes, intl } = this.props;
     return (
-
       <Grid className={classes.headerContainer} container item xs={12}>
         <Grid className={classes.titleContainer} item xs={12}>
           <Grid className={classes.titleTextHelpContainer} container>
-            <Typography className={classes.title} variant='h2'>
+            <Typography className={classes.title} variant="h2">
               <FormattedMessage {...messages.formTitle} />
             </Typography>
             <Button
               className={classes.helpButton}
-              variant='outlined'
+              variant="outlined"
               onClick={this.handleOpen}
             >
               <img
@@ -154,11 +159,11 @@ class Form extends React.Component {
             <Modal open={this.state.openModal} onClose={this.handleClose}>
               <Grid className={classes.modalContent} container>
                 <iframe
-                  width='100%'
-                  height='100%'
-                  src='https://www.youtube.com/embed/WoZkMN0m1oA'
-                  frameBorder='0'
-                  allow='autoplay; encrypted-media'
+                  width="100%"
+                  height="100%"
+                  src="https://www.youtube.com/embed/WoZkMN0m1oA"
+                  frameBorder="0"
+                  allow="autoplay; encrypted-media"
                   allowFullScreen
                 />
               </Grid>
@@ -181,38 +186,53 @@ class Form extends React.Component {
             onChange={(evt, value) => {
               this.handleChange(evt, value);
             }}
+            TabIndicatorProps={{
+              style: {
+                display: 'none',
+              },
+            }}
           >
-            <Tab 
+            <Tab
               label={
                 <span className={classes.tabLabel}>
                   <span>{intl.formatMessage(messages.main)}</span>
                 </span>
-              }	
-              icon={
-                this.props.errorState.tabs.indexOf(0) > -1 ? 
-                  <div id='notificationDot' className={classes.notificationDot}>
-                    <span className={classes.numOfErrorsLabel}>
-                      {(this.props.errorState.tabs.filter((element) => { return element === 0 })).length}
-                    </span>
-                  </div> : 
-                  null
               }
+              icon={
+                this.props.errorState.tabs.indexOf(0) > -1 ? (
+                  <div id="notificationDot" className={classes.notificationDot}>
+                    <span className={classes.numOfErrorsLabel}>
+                      {
+                        this.props.errorState.tabs.filter(
+                          element => element === 0,
+                        ).length
+                      }
+                    </span>
+                  </div>
+                ) : null
+              }
+              className={this.state.selectedTab === 0 ? classes.selected : null}
             />
-            <Tab 
+            <Tab
               label={
                 <span className={classes.tabLabel}>
                   <span>{intl.formatMessage(messages.parameters)}</span>
                 </span>
               }
               icon={
-                this.props.errorState.tabs.indexOf(1) > -1 ? 
-                  <div id='notificationDot' className={classes.notificationDot}>
+                this.props.errorState.tabs.indexOf(1) > -1 ? (
+                  <div id="notificationDot" className={classes.notificationDot}>
                     <span className={classes.numOfErrorsLabel}>
-                      {(this.props.errorState.tabs.filter((element) => { return element === 1 })).length}
+                      {
+                        this.props.errorState.tabs.filter(
+                          element => element === 1,
+                        ).length
+                      }
                     </span>
-                  </div> : 
-                  null
+                  </div>
+                ) : null
               }
+              className={this.state.selectedTab === 1 ? classes.selected : null}
             />
           </Tabs>
           {this.state.selectedTab === 0 && (
@@ -234,12 +254,12 @@ class Form extends React.Component {
             />
           )}
         </Grid>
-        {this.props.newCategory ? null : 
+        {this.props.newCategory ? null : (
           <DeleteFooter
             onDelete={this.props.onDelete}
             type={intl.formatMessage(messages.instanceName)}
           />
-        }
+        )}
       </Grid>
     );
   }

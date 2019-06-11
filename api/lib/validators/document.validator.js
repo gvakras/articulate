@@ -3,7 +3,7 @@ import { PARAM_DOCUMENT_ID } from '../../util/constants';
 
 const Model = require('../models/document.model').schema;
 
-class ContextValidate {
+class DocumentValidate {
     constructor() {
 
         this.findById = {
@@ -58,7 +58,7 @@ class ContextValidate {
                     rasa_results: Model.rasa_results,
                     creationDate: Model.creationDate,
                     modificationDate: Model.modificationDate,
-                    webhookResponses: Model.webhookResponses
+                    webhooks: Model.webhooks
                 };
             })()
         };
@@ -72,4 +72,4 @@ class ContextValidate {
     }
 }
 
-module.exports = new ContextValidate();
+module.exports = new DocumentValidate();

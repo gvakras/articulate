@@ -79,10 +79,11 @@ module.exports = async function ({ id, returnModel = false }) {
 
     const { redis } = this.server.app;
 
-    const { globalService, categoryService, rasaNLUService } = await this.server.services();
+    const { globalService, categoryService, rasaNLUService, serverService } = await this.server.services();
 
     let model = Guid.create().toString();
     try {
+        const ServerModel = await serverService.get({ returnModel: true });
         const AgentModel = await redis.factory(MODEL_AGENT, id);
         const agent = AgentModel.allProperties();
         let markedAsTraining = false;
@@ -95,9 +96,6 @@ module.exports = async function ({ id, returnModel = false }) {
         });
 
         if (sayingsWithoutActions.length > 0){
-            const AgentModel = await redis.factory(MODEL_AGENT, id);
-            AgentModel.property('status', STATUS_ERROR);
-            await AgentModel.saveInstance();
             return Promise.reject(InvalidAgentTrain({ message: `The following user sayings doesn't have actions asigned: "${_.map(sayingsWithoutActions, 'userSays').join('", "')}"` }));
         }
 
@@ -116,6 +114,8 @@ module.exports = async function ({ id, returnModel = false }) {
                 const categoryRecognizerModel = `${agent.agentName}${RASA_MODEL_CATEGORY_RECOGNIZER}`;
                 AgentModel.property('status', STATUS_TRAINING);
                 await AgentModel.saveInstance();
+                ServerModel.property('status', STATUS_TRAINING);
+                await ServerModel.saveInstance();
                 markedAsTraining = true;
                 await rasaNLUService.train({
                     project: agent.agentName,
@@ -153,6 +153,8 @@ module.exports = async function ({ id, returnModel = false }) {
                         if (!markedAsTraining){
                             AgentModel.property('status', STATUS_TRAINING);
                             await AgentModel.saveInstance();
+                            ServerModel.property('status', STATUS_TRAINING);
+                            await ServerModel.saveInstance();
                             markedAsTraining = true;
                         }
                         await categoryService.train({ AgentModel, CategoryModel });
@@ -165,7 +167,7 @@ module.exports = async function ({ id, returnModel = false }) {
             const keywords = await globalService.loadAllByIds({ ids: await AgentModel.getAll(MODEL_KEYWORD, MODEL_KEYWORD), model: MODEL_KEYWORD });
             const trainingData = await categoryService.generateTrainingData({ keywords, sayings: allAgentSayings, extraTrainingData: agent.extraTrainingData });
             if (trainingData.numberOfSayings === 0) {
-                return;
+                return Promise.reject(InvalidAgentTrain({ agent: AgentModel.property('agentName') }));
             }
             const pipeline = trainingData.numberOfSayings === 1 ? agent.settings[CONFIG_SETTINGS_KEYWORD_PIPELINE] : agent.settings[CONFIG_SETTINGS_SAYING_PIPELINE];
             model = (trainingData.numberOfSayings === 1 ? RASA_MODEL_JUST_ER : '') + model;
@@ -173,6 +175,8 @@ module.exports = async function ({ id, returnModel = false }) {
             if (!markedAsTraining){
                 AgentModel.property('status', STATUS_TRAINING);
                 await AgentModel.saveInstance();
+                ServerModel.property('status', STATUS_TRAINING);
+                await ServerModel.saveInstance();
                 markedAsTraining = true;
             }
             await rasaNLUService.train({
@@ -207,6 +211,8 @@ module.exports = async function ({ id, returnModel = false }) {
             if (!markedAsTraining){
                 AgentModel.property('status', STATUS_TRAINING);
                 await AgentModel.saveInstance();
+                ServerModel.property('status', STATUS_TRAINING);
+                await ServerModel.saveInstance();
                 markedAsTraining = true;
             }
             await rasaNLUService.train({
@@ -240,8 +246,10 @@ module.exports = async function ({ id, returnModel = false }) {
             if (currentAgent.status === STATUS_TRAINING){
                 AgentModel.property('lastTraining', Moment().utc().format());
                 AgentModel.property('status', STATUS_READY);
+                ServerModel.property('status', STATUS_READY);
             }
             await AgentModel.saveInstance();
+            await ServerModel.saveInstance();
             return returnModel ? AgentModel : AgentModel.allProperties();
         }
         return Promise.reject(InvalidAgentTrain({ agent: agent.agentName }));
@@ -250,6 +258,9 @@ module.exports = async function ({ id, returnModel = false }) {
         const AgentModel = await redis.factory(MODEL_AGENT, id);
         AgentModel.property('status', STATUS_ERROR);
         await AgentModel.saveInstance();
+        const ServerModel = await serverService.get({ returnModel: true });
+        ServerModel.property('status', STATUS_READY);
+        await ServerModel.saveInstance();
         throw RedisErrorHandler({ error });
     }
 };

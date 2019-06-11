@@ -26,9 +26,14 @@ module.exports = async function ({ url, templatePayload, payloadType, method, te
 
     try {
         const compiledUrl = handlebars.compile(url)(templateContext);
-        let compiledPayload;
+        let compiledPayload, compiledUsername, compiledPassword;
         let data = '';
         let contentType = '';
+
+        if (username) {
+            compiledUsername = handlebars.compile(username)(templateContext)
+            compiledPassword = handlebars.compile(password)(templateContext)
+        }
 
         if (payloadType !== 'None' && payloadType !== '') {
             compiledPayload = handlebars.compile(templatePayload)(templateContext);
@@ -56,37 +61,25 @@ module.exports = async function ({ url, templatePayload, payloadType, method, te
             headers: getHeaders(headers, contentType),
             responseType: payloadType === 'XML' ? 'text' : 'json',
             auth: username ? {
-                username,
-                password
+                username: compiledUsername,
+                password: compiledPassword
             } : undefined
         });
         endTime = new Moment();
         const elapsed_time_ms = Moment.duration(endTime.diff(startTime), 'ms').asMilliseconds();
-        if (typeof response.data === 'string'){
-            return {
-                text: response.data,
-                elapsed_time_ms
-            }
-        }
         return {
-            ...response.data,
-            elapsed_time_ms
+            response: response.data,
+            elapsed_time_ms,
+            statusCode: response.status
         };
     }
     catch (error) {
+        console.log(error);
         endTime = new Moment();
         const elapsed_time_ms = Moment.duration(endTime.diff(startTime), 'ms').asMilliseconds();
         if (error.response && error.response.data){
-            if (typeof error.response.data === 'string'){
-                return {
-                    text: error.response.data,
-                    elapsed_time_ms,
-                    statusCode: error.response.status
-                }
-            }
-            delete error.response.data.statusCode;
             return {
-                ...error.response.data,
+                error: error.response.data,
                 elapsed_time_ms,
                 statusCode: error.response.status
             };

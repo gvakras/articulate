@@ -16,37 +16,24 @@ const mappings = {
             type: 'float'
         },
         total_elapsed_time_ms: {
-            type: 'text'
+            type: 'integer'
         },
         rasa_results: {
             type: 'object'
         },
         session: {
-            type: 'text'
+            type: 'keyword'
         },
         agent_id: {
             type: 'integer'
         },
         agent_model: {
             type: 'text'
+        },
+        converseResult: {
+            type: 'text'
         }
-    },
-    dynamic_templates: [
-        {
-            'raw_as_text': {
-                'path_match': 'webhookResponse.*',
-                'mapping': {
-                    'type': 'text',
-                    'fields': {
-                        'keyword': {
-                            'type': 'keyword',
-                            'ignore_above': 256
-                        }
-                    }
-                }
-            }
-        }
-    ]
+    }
 };
 
 const settings = {
